@@ -101,7 +101,7 @@ fun PlaceholderScreen(modifier: Modifier = Modifier) {
 - [x] `DAY2` 브랜치 생성
 - [x] `./gradlew assembleDebug` 성공
 - [ ] 에뮬레이터 또는 폰에서 "MiniGCS — 기체 미연결" 화면 확인
-- [ ] 퀴즈 4문항을 한두 문장으로 말할 수 있다.
+- [x] 퀴즈 4문항을 한두 문장으로 말할 수 있다.
 
 ## 7. 주말 실기체에서 확인해야 할 항목 (Weekend Task)
 
