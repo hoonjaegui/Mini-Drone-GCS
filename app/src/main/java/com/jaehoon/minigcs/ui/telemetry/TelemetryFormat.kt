@@ -3,6 +3,7 @@ package com.jaehoon.minigcs.ui.telemetry
 import com.jaehoon.minigcs.model.ConnectionState
 import com.jaehoon.minigcs.model.FlightState
 import com.jaehoon.minigcs.model.GeoLocation
+import com.jaehoon.minigcs.model.SdkStatus
 import java.util.Locale
 
 // DroneState 값 → 화면 문자열. null("모름")은 전부 여기서 "—"로 바뀐다.
@@ -12,6 +13,13 @@ internal fun formatConnection(state: ConnectionState): String = when (state) {
     ConnectionState.DISCONNECTED -> "연결 끊김"
     ConnectionState.RC_ONLY -> "조종기만 연결됨"
     ConnectionState.CONNECTED -> "기체 연결됨"
+}
+
+internal fun formatSdkStatus(status: SdkStatus): String = when (status) {
+    SdkStatus.NotUsed -> "DJI SDK: 사용 안 함"
+    SdkStatus.Registering -> "DJI SDK: 등록 중…"
+    SdkStatus.Registered -> "DJI SDK: 등록 완료"
+    is SdkStatus.Failed -> "DJI SDK: 등록 실패 — ${status.message}"
 }
 
 internal fun formatFlightState(state: FlightState): String = when (state) {
