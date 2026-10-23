@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- DJI SDK 등록(registerApp)은 첫 실행 때 인터넷으로 App Key를 검증한다. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- RC는 USB Accessory로 붙는다. required=false: RC가 없는 폰에도 설치는 되게 한다. -->
+    <uses-feature
+        android:name="android.hardware.usb.accessory"
+        android:required="false" />
+
     <application
         android:name=".MiniGcsApplication"
         android:allowBackup="false"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.MiniGCS">
+
+        <!-- useLibrary("org.apache.http.legacy")와 짝. 런타임에 시스템 라이브러리를 붙여준다. -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.dji.sdk.API_KEY"
+            android:value="${djiApiKey}" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.MiniGCS">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- RC를 USB로 꽂으면 Android가 이 앱을 띄울 후보로 보여준다.
+                 accessory_filter.xml은 DJI SDK AAR 안에 들어 있다(T600, AG410, WM160 등). -->
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
         </activity>
     </application>
 

@@ -26,6 +26,7 @@ import com.jaehoon.minigcs.model.ConnectionState
 import com.jaehoon.minigcs.model.DroneState
 import com.jaehoon.minigcs.model.FlightState
 import com.jaehoon.minigcs.model.GeoLocation
+import com.jaehoon.minigcs.model.SdkStatus
 import com.jaehoon.minigcs.ui.theme.MiniGCSTheme
 
 // ViewModel과 연결하는 얇은 껍데기. 실제 그리기는 아래 stateless 버전이 한다.
@@ -35,11 +36,16 @@ fun TelemetryRoute(
     viewModel: TelemetryViewModel = viewModel(factory = TelemetryViewModel.Factory),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    TelemetryScreen(state = state, modifier = modifier)
+    val sdkStatus by viewModel.sdkStatus.collectAsStateWithLifecycle()
+    TelemetryScreen(state = state, sdkStatus = sdkStatus, modifier = modifier)
 }
 
 @Composable
-fun TelemetryScreen(state: DroneState, modifier: Modifier = Modifier) {
+fun TelemetryScreen(
+    state: DroneState,
+    sdkStatus: SdkStatus,
+    modifier: Modifier = Modifier,
+) {
     // 기체와 끊기면 마지막 값이 "현재 값"처럼 보이지 않도록 흐리게 표시한다(Day 3 퀴즈 4).
     val isLive = state.connection == ConnectionState.CONNECTED
 
@@ -57,6 +63,11 @@ fun TelemetryScreen(state: DroneState, modifier: Modifier = Modifier) {
             TelemetryRow("방향", formatHeading(state.headingDeg))
             TelemetryRow("배터리", formatBattery(state.batteryPercent))
         }
+        Text(
+            text = formatSdkStatus(sdkStatus),
+            style = MaterialTheme.typography.bodySmall,
+            color = if (sdkStatus is SdkStatus.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
@@ -105,7 +116,8 @@ private fun TelemetryScreenInAirPreview() {
                 headingDeg = 137.0,
                 batteryPercent = 82,
                 flightState = FlightState.IN_AIR,
-            )
+            ),
+            sdkStatus = SdkStatus.Registered,
         )
     }
 }
@@ -114,6 +126,6 @@ private fun TelemetryScreenInAirPreview() {
 @Composable
 private fun TelemetryScreenDisconnectedPreview() {
     MiniGCSTheme {
-        TelemetryScreen(DroneState())
+        TelemetryScreen(DroneState(), sdkStatus = SdkStatus.Failed("Invalid App Key"))
     }
 }
